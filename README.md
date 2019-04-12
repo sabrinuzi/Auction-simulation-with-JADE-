@@ -1,27 +1,7 @@
 # Auction-simulation-with-JADE
-Implementing a simulation of online shopping auctions with JADE. JADE (Java Agent DEvelopment Framework) is a software Framework fully implemented in the Java language.
+#### Implementing a simulation of online shopping auctions with JADE. JADE (Java Agent DEvelopment Framework) is a software Framework fully implemented in the Java language.
 
-This work is about the simulation of online auction shopping using multi-agent based
-
-systems. It makes possible the process of buying to be based on analysis so buyers can
-
-make their best choice about each product. This application filters the whole buying
-
-process based on some criteria that are set after surveying the behavior that each of the
-
-agents makes with the product he/she is interested in. Based on the criteria that each
-
-buyer has about the product he/she is searching for, the application tries to evaluate the
-
-product that with high probability can be acquired with the minimum cost. Since every
-
-buyer has his own criteria the result will be different to everyone according to the
-
-specifications that the buyer makes about the product. As a result we may say that now
-
-we have many intelligent agents that act as buyers and make the best choice from all the
-
-studied cases that are analyzed before according to the specified criteria.
+This work is about the simulation of online auction shopping using multi-agent based systems. It makes possible the process of buying to be based on analysis so buyers can make their best choice about each product. This application filters the whole buying process based on some criteria that are set after surveying the behavior that each of the agents makes with the product he/she is interested in. Based on the criteria that each buyer has about the product he/she is searching for, the application tries to evaluate the product that with high probability can be acquired with the minimum cost. Since every buyer has his own criteria the result will be different to everyone according to the specifications that the buyer makes about the product. As a result we may say that now we have many intelligent agents that act as buyers and make the best choice from all the studied cases that are analyzed before according to the specified criteria.
 
 
 References:
