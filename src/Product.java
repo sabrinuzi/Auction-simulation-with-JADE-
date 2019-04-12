@@ -3,7 +3,7 @@ package sabri;
 import java.sql.Date;
 import java.util.ArrayList;
 
-public class Product implements java.io.Serializable{
+public class Product implements java.io.Serializable {
 
 	public int id;
 	public int price;

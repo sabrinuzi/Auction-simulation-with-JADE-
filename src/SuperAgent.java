@@ -18,19 +18,17 @@ public class SuperAgent extends Agent {
 	protected boolean register(String type, String name){
 		
 		boolean ret = true;
-		
 		if (type == null){
 			ret = false;
-		}
-		else{
-			ServiceDescription sd = new ServiceDescription();
-			if (name != null)
-				sd.setName(name);
-			sd.setType(type);
-			
+		} else {
+			ServiceDescription serviceDescription = new ServiceDescription();
+			if (name != null) {
+                serviceDescription.setName(name);
+            }
+			serviceDescription.setType(type);
 			DFAgentDescription dfd = new DFAgentDescription();
 			dfd.setName(getAID());
-			dfd.addServices(sd);
+			dfd.addServices(serviceDescription);
 			
 			try {
 				DFService.register(this, dfd);
@@ -46,13 +44,16 @@ public class SuperAgent extends Agent {
 	
 	public static AID[] search(Agent agent, String type, String name){
 		
-		ServiceDescription sd = new ServiceDescription();
-		if (name != null) sd.setName(name);
-		if (type != null) sd.setType(type);
-		
+		ServiceDescription serviceDescription = new ServiceDescription();
+		if (name != null) {
+            serviceDescription.setName(name);
+        }
+		if (type != null){
+            serviceDescription.setType(type);
+        }
 		
 		DFAgentDescription dfd = new DFAgentDescription();
-		dfd.addServices(sd);
+		dfd.addServices(serviceDescription);
 		
 		DFAgentDescription[] aidDes = null;
 		AID[] aids = null;
@@ -63,9 +64,9 @@ public class SuperAgent extends Agent {
 			e.printStackTrace();
 		}
 		
-		if (aidDes != null && aidDes.length > 0){
+		if (aidDes != null && aidDes.length > 0) {
 			aids = new AID[aidDes.length];
-			for (int i = 0; i < aidDes.length; i++){
+			for (int i = 0; i < aidDes.length; i++) {
 				aids[i] = aidDes[i].getName(); 
 			}
 		}
@@ -75,13 +76,13 @@ public class SuperAgent extends Agent {
 	
 	public AID[] search(String type, String name){
 		
-		ServiceDescription sd = new ServiceDescription();
-		if (name != null) sd.setName(name);
-		if (type != null) sd.setType(type);
+		ServiceDescription serviceDescription = new ServiceDescription();
+		if (name != null) serviceDescription.setName(name);
+		if (type != null) serviceDescription.setType(type);
 		
 		
 		DFAgentDescription dfd = new DFAgentDescription();
-		dfd.addServices(sd);
+		dfd.addServices(serviceDescription);
 		
 		DFAgentDescription[] aidDes = null;
 		AID[] aids = null;
@@ -92,7 +93,7 @@ public class SuperAgent extends Agent {
 			e.printStackTrace();
 		}
 		
-		if (aidDes != null && aidDes.length > 0){
+		if (aidDes != null && aidDes.length > 0) {
 			aids = new AID[aidDes.length];
 			for (int i = 0; i < aidDes.length; i++){
 				aids[i] = aidDes[i].getName(); 
@@ -101,17 +102,15 @@ public class SuperAgent extends Agent {
 		return aids;
 
 	}
-	public static Properties getProps(String configFilePath) {
 
+    public static Properties getProps(String configFilePath) {
 		Properties props = new Properties();
 		try {
 			FileInputStream inputFile = new FileInputStream(configFilePath);
-
 			if (inputFile != null) {
 				props.load(inputFile);
 			}
 			inputFile.close();
-
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
