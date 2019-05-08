@@ -15,10 +15,10 @@ public class SuperAgent extends Agent {
 
 	private static final long serialVersionUID = 1L;
 	
-	protected boolean register(String type, String name){
+	protected boolean register(String type, String name) {
 		
 		boolean ret = true;
-		if (type == null){
+		if (type == null) {
 			ret = false;
 		} else {
 			ServiceDescription serviceDescription = new ServiceDescription();
@@ -41,14 +41,13 @@ public class SuperAgent extends Agent {
 		return ret;
 	}
 	
-	
-	public static AID[] search(Agent agent, String type, String name){
+	public static AID[] search(Agent agent, String type, String name) {
 		
 		ServiceDescription serviceDescription = new ServiceDescription();
 		if (name != null) {
             serviceDescription.setName(name);
         }
-		if (type != null){
+		if (type != null) {
             serviceDescription.setType(type);
         }
 		
@@ -69,12 +68,12 @@ public class SuperAgent extends Agent {
 			for (int i = 0; i < aidDes.length; i++) {
 				aids[i] = aidDes[i].getName(); 
 			}
-		}
+        }
+        
 		return aids;
 	}
 	
-	
-	public AID[] search(String type, String name){
+	public AID[] search(String type, String name) {
 		
 		ServiceDescription serviceDescription = new ServiceDescription();
 		if (name != null) serviceDescription.setName(name);
@@ -95,12 +94,12 @@ public class SuperAgent extends Agent {
 		
 		if (aidDes != null && aidDes.length > 0) {
 			aids = new AID[aidDes.length];
-			for (int i = 0; i < aidDes.length; i++){
+			for (int i = 0; i < aidDes.length; i++) {
 				aids[i] = aidDes[i].getName(); 
 			}
-		}
+        }
+        
 		return aids;
-
 	}
 
     public static Properties getProps(String configFilePath) {
@@ -113,8 +112,8 @@ public class SuperAgent extends Agent {
 			inputFile.close();
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
+        }
+        
 		return props;
 	}
-
 }

@@ -18,8 +18,5 @@ public class Product implements java.io.Serializable {
 	public int nrLastViews = 0;
 	public int nrLastBid = 0;
 	public boolean notCheck = false;
-	
 	public ArrayList<Double> probabilityAverage = new ArrayList<Double>();
-	
-	
 }

@@ -7,7 +7,6 @@ import jade.core.behaviours.TickerBehaviour;
 import jade.core.behaviours.WakerBehaviour;
 import jade.domain.introspection.AddedBehaviour;
 import jade.lang.acl.ACLMessage;
-
 import java.io.File;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -25,21 +24,18 @@ public class Buyer extends SuperAgent {
 	private static final int SECOND_MILLIS = 1000;
 	private static final int TICK_EVERY = 2000;
 	public final static long MINUTE_MILLIS = SECOND_MILLIS * 60;
-	/**
-	 * The main method
-	 */
+
 	public String id;
 	public int pid;
 	public int budget;
 
 	public ArrayList<Product> myProducts;
-	/*
-	* A List to keep all requests made to a seller.
-	*/
+	
+	//A List to keep all requests made to a seller.
 	public ArrayList<SellerRequest> myRequests;
 	public Date lastRequest;
 	
-	/*
+	/**
 	* this specified the way how to calculate the time of the next bid in buyerTick
 	* 1- time remained devided by 2
 	* 2- Bid per time remained
@@ -47,7 +43,6 @@ public class Buyer extends SuperAgent {
 	public int bidMethod;
 	
 	protected void setup() {
-
 		String myName = getLocalName();
 		this.lastRequest = new Date();
 		myProducts = new ArrayList<Product>();
@@ -57,7 +52,7 @@ public class Buyer extends SuperAgent {
 
 		System.out.println("Launched buyer named: " + myName);
 		
-		/*
+		/**
 		 * The file syntax is "resources/<agentName>.conf"
 		 * Get properties from file <agent name>.props The file contains all the
 		 * information to be load by a specific agent.
@@ -73,7 +68,7 @@ public class Buyer extends SuperAgent {
 		
 		SequentialBehaviour sb = new SequentialBehaviour();
 		
-		/*
+		/**
 		* Run after 2 seconds
 		* When agents wakes up send to all seller product id he is interested and waits for info
 		*/
@@ -96,7 +91,7 @@ public class Buyer extends SuperAgent {
 						request.lastRequest = new Date();
 						myRequests.add(request);
 					}
-					//Update last request to current date time;
+					// Update last request to current date time;
 					lastRequest = new Date();
 					send(msg);
 				}
@@ -110,13 +105,13 @@ public class Buyer extends SuperAgent {
 		addBehaviour(sb);
     }
     
-	/*
+	/**
 	* Removes from the list the product that its time is ended
     *
     */
-    public void timeEnded(int pid,String seller){	
+    public void timeEnded(int pid, String seller) {	
 		
-		if(productExists(pid, seller)){
+		if (productExists(pid, seller)) {
 			int idx = getProductIndex(pid, seller);
 			Product currProd = getProduct(pid, seller);
 			
@@ -130,7 +125,7 @@ public class Buyer extends SuperAgent {
 		}
 	}
     
-    /*
+    /**
 	* This method takes and date string and calculates the time remained till the product time ends
     * 
     * @param String a date time
@@ -154,7 +149,7 @@ public class Buyer extends SuperAgent {
 		return diffMinutes;
     }
     
-	/*
+	/**
     * Checks if product exists in buyer's list of products
     */
 	public boolean productExists(int pid, String seller) {
@@ -168,7 +163,7 @@ public class Buyer extends SuperAgent {
 		return found;
 	}
 
-    /*
+    /**
     * Checks product list and returns the prduct for the given product ID
     * 
     * @param int product ID
@@ -186,7 +181,7 @@ public class Buyer extends SuperAgent {
 		return p;
 	}
 	
-    /*
+    /**
     * returns the product index at buyer's list of products for the given product ID
     */
 	public int getProductIndex(int pid, String seller) {
@@ -201,8 +196,7 @@ public class Buyer extends SuperAgent {
 		return idx;
 	}
 
-    /*
-    *
+    /**
     * @param String seller
 	* @return Date the last request of buyer, made to the given seller, 
     */
@@ -217,7 +211,7 @@ public class Buyer extends SuperAgent {
 		return s;
 	}
 
-    /*
+    /**
     * @return int index of the time request for the given seller,
     */
 	public int getRequestIndex(String seller) {
@@ -231,7 +225,7 @@ public class Buyer extends SuperAgent {
 		return idx;
 	}
     
-    /*
+    /**
 	* @return int random number within the range of min max given in parameters
     */
     public static int randInt(int min, int max) {
@@ -239,5 +233,4 @@ public class Buyer extends SuperAgent {
 	    int randomNum = rand.nextInt((max - min) + 1) + min;
 	    return randomNum;
 	}
-
 }

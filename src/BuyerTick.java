@@ -29,7 +29,6 @@ public class BuyerTick extends TickerBehaviour {
         
         // If there is any read the content
         if (msg != null) {
-            
             Object obj = new Object();
             System.out.println(MeAgent.getLocalName() + "  there is a message- msg performative=" + msg.getPerformative() + "  my perf should be=" + ACLMessage.CONFIRM);
             // in case of any information messages from sellers
@@ -44,34 +43,32 @@ public class BuyerTick extends TickerBehaviour {
                     System.out.println("[~]" + MeAgent.getLocalName() + " : " + msg.getSender().getLocalName() + "  sais he does not have such a product or may be sold ");
                     
                     if (obj!=null) {
-                        Product p = (Product)obj;
-                        MeAgent.timeEnded(p.id,p.seller);
+                        Product product = (Product)obj;
+                        MeAgent.timeEnded(product.id,product.seller);
                     }
 
                 } else {
-                    Product p = (Product)obj;
+                    Product product = (Product) obj;
                     
-                    System.out.println("[~]" + MeAgent.getLocalName() + " : " + msg.getSender().getLocalName() + "  sais he has such a product with price " + p.price + "  and will end in " + MeAgent.calculateRemaindTime(p.timeEnd) + "  seconds");
+                    System.out.println("[~]" + MeAgent.getLocalName() + " : " + msg.getSender().getLocalName() + "  sais he has such a product with price " + product.price + "  and will end in " + MeAgent.calculateRemaindTime(product.timeEnd) + "  seconds");
                     
                     //update product list
-                    if (MeAgent.productExists(p.id,msg.getSender().getLocalName())) {
-                        
+                    if (MeAgent.productExists(product.id,msg.getSender().getLocalName())) {
                         //if I have money to continue the bid marathon
-                        if (MeAgent.budget - p.bidStep >= p.price ) {
-                            
+                        if (MeAgent.budget - product.bidStep >= product.price ) {
                             //if I am the last one who bid do not bid again
-                            if (MeAgent.getLocalName().equals(p.buyerBid)) {
+                            if (MeAgent.getLocalName().equals(product.buyerBid)) {
                                 
                                 System.out.println("[~]" + MeAgent.getLocalName() + " : sais: I am not biding again to " + msg.getSender().getLocalName() + " , I am the last one who did on this product ");									
                                 // updates the requests list for this seller
                                 SellerRequest sr = new SellerRequest();
                                 sr.lastRequest = new Date();
-                                sr.seller = p.seller;
+                                sr.seller = product.seller;
                                 
-                                int moneyLeft = MeAgent.budget-p.price;
-                                int spIdx = MeAgent.getRequestIndex(p.seller);
-                                int bidStep = p.bidStep;
-                                long timeLeft = MeAgent.calculateRemaindTime(p.timeEnd);
+                                int moneyLeft = MeAgent.budget-product.price;
+                                int spIdx = MeAgent.getRequestIndex(product.seller);
+                                int bidStep = product.bidStep;
+                                long timeLeft = MeAgent.calculateRemaindTime(product.timeEnd);
                                 long  bidsLeft = moneyLeft/bidStep;
                                 long bidPerSeconds = timeLeft/bidsLeft;
                                 // here the agent decide to bid acording to the method he is programmed to think from the creation.
@@ -90,31 +87,29 @@ public class BuyerTick extends TickerBehaviour {
                                 
                                 // update last requests to current seller
                                 MeAgent.myRequests.set(spIdx,sr);
-                            }
                             
-                            //else, think to bid or not to bid :)
-                            else{
-                                Product currProduct = MeAgent.getProduct(p.id, p.seller);
-                                int bidDifferenc = p.nrBids - currProduct.nrBids;
-                                int priceDiff = p.price - currProduct.price;
+                            // Think to bid or not to bid :)
+                            } else {
+                                Product currProduct = MeAgent.getProduct(product.id, product.seller);
+                                int bidDifferenc = product.nrBids - currProduct.nrBids;
+                                int priceDiff = product.price - currProduct.price;
                                 
+                                int idx = MeAgent.getProductIndex(product.id, product.seller);
+                                MeAgent.myProducts.set(idx, product);
                                 
-                                int idx = MeAgent.getProductIndex(p.id, p.seller);
-                                MeAgent.myProducts.set(idx, p);
-                                
-                                int moneyLeft = MeAgent.budget-p.price;
-                                int bidStep = p.bidStep;
-                                long timeLeft = MeAgent.calculateRemaindTime(p.timeEnd);
+                                int moneyLeft = MeAgent.budget-product.price;
+                                int bidStep = product.bidStep;
+                                long timeLeft = MeAgent.calculateRemaindTime(product.timeEnd);
                                 long bidsLeft = moneyLeft / bidStep;
                                 long bidPerSeconds = timeLeft / bidsLeft;
                                 
-                                // updates the requests list for this seller
+                                // Updates the requests list for this seller
                                 SellerRequest sr = new SellerRequest();
                                 sr.lastRequest = new Date();
-                                sr.seller = p.seller;
-                                int spIdx = MeAgent.getRequestIndex(p.seller);
+                                sr.seller = product.seller;
+                                int spIdx = MeAgent.getRequestIndex(product.seller);
                                 
-                                // here the agent decide to bid acording to the method he is programmed to think from the creation.
+                                // Here the agent decide to bid acording to the method he is programmed to think from the creation.
                                 switch (MeAgent.bidMethod) {
                                 case 1:
                                     sr.bidTime = timeLeft / 2;
@@ -128,16 +123,15 @@ public class BuyerTick extends TickerBehaviour {
                                     break;
                                 }
                                 
-                                // update last requests to current seller
-                                MeAgent.myRequests.set(spIdx, sr);
-                                
-                                // get a rando number, probability
+                                // Update last requests to current seller
+                                MeAgent.myRequests.set(spIdx, sr); 
+                                // Get a rando number, probability
                                 double  propability = Math.random();
                                 int bids = currProduct.nrBids - currProduct.nrLastBid;
                                 int views = currProduct.nrViewrs - currProduct.nrLastViews;
                                 double bViews;
                                 
-                                //calculate bid per viewers ration
+                                // Calculate bid per viewers ration
                                 if (views != 0) {
                                     bViews = bids / views;
                                 } else {
@@ -148,13 +142,13 @@ public class BuyerTick extends TickerBehaviour {
                                 currProduct.probabilityAverage.add(toBid);
                                 
                                 double sum = 0;
-                                for(double v:currProduct.probabilityAverage) {
+                                for (double v:currProduct.probabilityAverage) {
                                     sum += v;
                                 }
                                 double ave = sum / currProduct.probabilityAverage.size();
                                 double threshold = ave * 0.5;
                                 if (toBid >= threshold) {
-                                    
+
                                 }
                                 
                                 // update product with current values
@@ -170,32 +164,28 @@ public class BuyerTick extends TickerBehaviour {
                                 * structure of message is
                                 * product_id;bid_money(step);curr_nrBids;
                                 */
-                                ans.setContent(p.id  + " ;" + p.bidStep  + " ;" + p.nrBids);
+                                ans.setContent(product.id  + " ;" + product.bidStep  + " ;" + product.nrBids);
                                 MeAgent.send(ans);	
                             }
-                            
+
                         } else {
                             // if buyer do not have enough money, remove the product.
                             System.out.println("[~]" + MeAgent.getLocalName() + " : " + " is Removing product ");
                             
-                            int idx = MeAgent.getProductIndex(p.id,p.seller);
+                            int idx = MeAgent.getProductIndex(product.id,product.seller);
                             MeAgent.myProducts.remove(idx);
-                            System.out.println("[~]" + MeAgent.getLocalName() + " : " + " is removing from my list product " + p.id + "  ; his budget:" + MeAgent.budget + "  but product price is: " + p.price);	
+                            System.out.println("[~]" + MeAgent.getLocalName() + " : " + " is removing from my list product " + product.id + "  ; his budget:" + MeAgent.budget + "  but product price is: " + product.price);	
                         }
-                        
                     } else {
                         //add for the first  time product to my list
-                        MeAgent.myProducts.add(p);
+                        MeAgent.myProducts.add(product);
                     }
-                    
                 }
-                
             } else if (msg.getPerformative() == ACLMessage.CONFIRM) {
                 System.out.println("[~]" + MeAgent.getLocalName()  + " : " + " content=" + msg.getContent()  + "  I won the product from seller " + msg.getSender().getLocalName());	
                 this.stop();
             }
-            
-    }
+        }
         /*
         * System.out.println("MeAgent.myProducts.length=" + MeAgent.myProducts.size());
         * collect information from sellers 
@@ -211,9 +201,7 @@ public class BuyerTick extends TickerBehaviour {
         
             System.out.println("[~]" + MeAgent.getLocalName() + " : next seller request is after " + timeToRequest + "  seconds");
             if (diff > timeToRequest) {
-                
                 AID[] list = MeAgent.search("seller", product.seller);
-                
                 if (list.length > 0) {
                     // INFORM_IF means if the seller has this product for sale
                     ACLMessage msgToSeller = new ACLMessage(ACLMessage.INFORM_IF);
@@ -236,6 +224,5 @@ public class BuyerTick extends TickerBehaviour {
                 }
             }
         }
-    }
-    
+    }  
 }

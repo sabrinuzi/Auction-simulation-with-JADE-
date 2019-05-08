@@ -5,12 +5,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.CopyOnWriteArrayList;
-
 import jade.core.AID;
 import jade.core.behaviours.TickerBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.util.leap.Properties;
-import new_ex.Seller;
+import sabri.Seller;
 
 public class SellerTick extends TickerBehaviour {
 
@@ -51,7 +50,7 @@ public class SellerTick extends TickerBehaviour {
 				Product prod = searchProduct(MeAgent.myProducts,Integer.parseInt( content));
 				Serializable result = (Serializable) prod;
 				// if product if found inform buyer
-				if (result!=null) {
+				if (result != null) {
 					if (prod.sold == true) {
 						answer = "sold";
 						ansMsg.setPerformative(ACLMessage.INFORM);
@@ -96,7 +95,7 @@ public class SellerTick extends TickerBehaviour {
 			}	
 		}	
 		
-		MeAgent.check_end();
+		MeAgent.checkEnd();
 	}
 	
 	/*

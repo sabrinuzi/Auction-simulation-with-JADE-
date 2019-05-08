@@ -5,7 +5,6 @@ import jade.core.AID;
 import jade.core.behaviours.TickerBehaviour;
 import jade.core.behaviours.WakerBehaviour;
 import jade.lang.acl.ACLMessage;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -13,8 +12,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.concurrent.CopyOnWriteArrayList;
-
-import new_ex.Product;
+import sabri.Product;
 
 public class Seller extends SuperAgent {
 
@@ -27,16 +25,15 @@ public class Seller extends SuperAgent {
 	public Seller agent;
 	public Product prod;
 	
-	
 	// my data
 	public String id;
 	public String lastChecked;
 	
-	protected void setup(){
+	protected void setup() {
 		
 		String myName = getLocalName();
 		this.lastChecked = "";
-		this.myProducts= myProduct = new CopyOnWriteArrayList< Product >();
+		this.myProducts = new CopyOnWriteArrayList< Product >();
 		
 		register("seller", getLocalName());
 	
@@ -45,7 +42,7 @@ public class Seller extends SuperAgent {
 		// The file syntax is "resources/<agentName>.conf"
 		String fileName = "resources" + File.separator + myName + ".conf";
 		
-		/*
+		/**
         * Get properties from file <agent name>.props The file contains all the
         * information to be load by a specific agent.
         */
@@ -56,13 +53,13 @@ public class Seller extends SuperAgent {
 		String[] timesEnd = props.getProperty("end_time").split(";");
 		String[] steps = props.getProperty("step").split(";");
 		
-		// get the product from the reaources file
-		for(int i = 0; i < products.length; i++){
+		// Get the product from the reaources file
+		for (int i = 0; i < products.length; i++) {
 			prod = new Product();
 			prod.id = Integer.parseInt(products[i]);
             prod.price = Integer.parseInt(prices[i]);
             
-			//for test purpose I use tthis date time  "15/12/08 23:12:20"; instead of timesEnd[i]; 
+			// For test purpose I use tthis date time  "15/12/08 23:12:20"; instead of timesEnd[i]; 
 			prod.timeEnd = timesEnd[i]; 
 			prod.bidStep = Integer.parseInt(steps[i]);
 			prod.seller = this.getLocalName();
@@ -75,77 +72,76 @@ public class Seller extends SuperAgent {
 		addBehaviour(new SellerTick(this, TICK_EVERY));
 	}
 	
-	public void check_end(){	
+	public void checkEnd() {	
 		Iterator<Product> ite = myProducts.iterator();
 		while (ite.hasNext()) {
 			Product prod = ite.next();
 			this.timeEnded(prod.id);
 		}
-
-	}
-	// check if product time ended
-	public void timeEnded(int pid){	
+    }
+    
+	// Check if product time ended
+	public void timeEnded(int pid) {	
 		
 		int idx = getProductIndex(pid);
 		Product currProd = getProduct(pid);
 		
-			Date now = new Date();
-			int time = (int)now.getTime() / 1000;
-			int endTime = (int)calculateRemaindTime(currProd.timeEnd.toString());
-			if (endTime < 0) {
-                if(!currProd.notCheck) {
-					currProd.sold = true;
-					currProd.notCheck = true;
-					myProducts.set(idx, currProd);
-					if(currProd.buyerBid!= null){
-						System.out.println("\n[~]" + getLocalName() + " Bid time for product with ID=" + pid + " has ended and buyer: " + currProd.buyerBid + " won the product \n");
-						ACLMessage msgToBuyer = new ACLMessage(ACLMessage.CONFIRM); 
-                        AID[] listBuyer = search("buyer", currProd.buyerBid.toString());
-                        
-						if (listBuyer.length > 0) {
-							msgToBuyer.setSender(listBuyer[0]);
-							msgToBuyer.setContent("You won this product");
-							send(msgToBuyer);
-							System.out.println("[~]" + getLocalName()+": " + " buyer: " + currProd.buyerBid + " won product with ID=" + currProd.id + " and buyer is notified");
-						}
-						else {
-                            System.out.println("[~]" + getLocalName() + ": " + " buyer: " + currProd.buyerBid + " won product with ID=" + currProd.id + " but buyer could not be found");
-                        }
-					}
-					else {
-                        System.out.println("\n[~]" + getLocalName() + " Bid time for product with ID=" + pid + " has ended and no one won the product \n");
+        Date now = new Date();
+        int time = (int)now.getTime() / 1000;
+        int endTime = (int)calculateRemaindTime(currProd.timeEnd.toString());
+        if (endTime < 0) {
+            if (!currProd.notCheck) {
+                currProd.sold = true;
+                currProd.notCheck = true;
+                myProducts.set(idx, currProd);
+                if (currProd.buyerBid!= null) {
+                    System.out.println("\n[~]" + getLocalName() + " Bid time for product with ID=" + pid + " has ended and buyer: " + currProd.buyerBid + " won the product \n");
+                    ACLMessage msgToBuyer = new ACLMessage(ACLMessage.CONFIRM); 
+                    AID[] listBuyer = search("buyer", currProd.buyerBid.toString());
+                    
+                    if (listBuyer.length > 0) {
+                        msgToBuyer.setSender(listBuyer[0]);
+                        msgToBuyer.setContent("You won this product");
+                        send(msgToBuyer);
+                        System.out.println("[~]" + getLocalName()+": " + " buyer: " + currProd.buyerBid + " won product with ID=" + currProd.id + " and buyer is notified");
+                    } else {
+                        System.out.println("[~]" + getLocalName() + ": " + " buyer: " + currProd.buyerBid + " won product with ID=" + currProd.id + " but buyer could not be found");
                     }
-                }	
-			}	
+                } else {
+                    System.out.println("\n[~]" + getLocalName() + " Bid time for product with ID=" + pid + " has ended and no one won the product \n");
+                }
+            }	
+        }	
 	}
     
     /*
 	* Searches if a product is found for this agent
     */
-    public Product searchProduct(ArrayList<Product> list, int pid){
+    public Product searchProduct(ArrayList<Product> list, int pid) {
 		Product prod = new Product();
 		boolean found = false;
 		
 		for (Product product : list) {
-			if(product.id == pid) {
+			if (product.id == pid) {
 				System.out.print(" Price  " + prod.id);
-				found = true;
+                found = true;
+                prod = product;
 				break;
 			}		
 		}
-		if(found) {
+		if (found) {
 		    return prod;
-		}
+        }
+        
 		return null;
 	}
 	
     /*
     * @return String  generates answer string to buyer
     */
-    public String buyerAsking(int pid){
+    public String buyerAsking(int pid) {
 		return null;
 	}
-    
     
 	public long calculateRemaindTime(String d) {
 		SimpleDateFormat format = new SimpleDateFormat("yy/MM/dd HH:mm:ss");
@@ -168,7 +164,7 @@ public class Seller extends SuperAgent {
 	/**
 	* This method generates answer string and action to buyer when he bids
 	*/
-	public void bidToProduct(int pid,int money,String buyer){
+	public void bidToProduct(int pid,int money,String buyer) {
 		
 		int idx = this.getProductIndex(pid);
 		Product currProd = this.getProduct(pid);
@@ -176,7 +172,6 @@ public class Seller extends SuperAgent {
 		currProd.price = currProd.price+money;
 		currProd.buyerBid = buyer;
 		myProducts.set(idx, currProd);
-		
 	}
     
     /**
@@ -185,20 +180,20 @@ public class Seller extends SuperAgent {
      * @param pid
      * @param buyer
     */
-	public void insertViewer(int pid,String buyer){
+	public void insertViewer(int pid,String buyer) {
         boolean insert=true;
         Product prod = getProduct(pid);	
         
-        if(prod.views.size() > 0){
-            for(String b:prod.views){
-                if(b.equals(buyer)){
+        if (prod.views.size() > 0) {
+            for(String b:prod.views) {
+                if (b.equals(buyer)) {
                     insert = false;
                     break;
                 }
             }
         }
 
-        if(insert){
+        if (insert) {
             prod.views.add(buyer);
             int idx=this.getProductIndex(pid);
             myProducts.set(idx, prod);
@@ -206,9 +201,9 @@ public class Seller extends SuperAgent {
     }
 		
 	/** 
-	This method generates answer string and action to buyer when he bids 
+	* This method generates answer string and action to buyer when he bids 
 	*/
-	public String buyProduct(int pid){
+	public String buyProduct(int pid) {
 		return null;
 	}
 
@@ -218,18 +213,19 @@ public class Seller extends SuperAgent {
      * @param pid
      * @return Product
      */
-	public Product getProduct(int pid){
-		Product p = new Product();
-		for (Product product : myProducts) {
-			if (product.id == pid) {
-				p = product;
+	public Product getProduct(int pid) {
+		Product product = new Product();
+		for (Product p : myProducts) {
+			if (p.id == pid) {
+				prod = p;
 				break;
 			}	
-		}
-		return p;
+        }
+        
+		return proproductd;
 	}
 	
-	/*
+	/**
 	* @return index for given product
 	*/
 	public int getProductIndex(int pid) {
@@ -239,7 +235,8 @@ public class Seller extends SuperAgent {
 				break;
 			} 
 			idx++;
-		}
+        }
+        
 		return idx;
 	}
 }
