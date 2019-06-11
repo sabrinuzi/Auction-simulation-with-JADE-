@@ -2,7 +2,6 @@ package sabri;
 
 import java.util.ArrayList;
 import java.util.Date;
-
 import jade.core.AID;
 import jade.core.behaviours.TickerBehaviour;
 import jade.lang.acl.ACLMessage;
@@ -10,19 +9,17 @@ import jade.lang.acl.UnreadableException;
 import jade.util.leap.Properties;
 
 public class BuyerTick extends TickerBehaviour {
-	
-	
-	public Properties props;
-	private Buyer MeAgent;
-	private static final long serialVersionUID = 1L;
+    
+    public Properties props;
+    private Buyer MeAgent;
+    private static final long serialVersionUID = 1L;
 
-	public BuyerTick(Buyer agent, long time) {
-		super (agent, time);
-		this.MeAgent = agent;
-	}
-	
-	protected void onTick() {
-		
+    public BuyerTick(Buyer agent, long time) {
+        super (agent, time);
+        this.MeAgent = agent;
+    }
+    
+    protected void onTick() {
         ACLMessage msg ;
         // Checks for message
         msg = MeAgent.receive();
@@ -41,7 +38,6 @@ public class BuyerTick extends TickerBehaviour {
                 
                 if (obj == null || ((Product) obj).sold) {
                     System.out.println("[~]" + MeAgent.getLocalName() + " : " + msg.getSender().getLocalName() + "  sais he does not have such a product or may be sold ");
-                    
                     if (obj!=null) {
                         Product product = (Product)obj;
                         MeAgent.timeEnded(product.id,product.seller);
@@ -49,7 +45,6 @@ public class BuyerTick extends TickerBehaviour {
 
                 } else {
                     Product product = (Product) obj;
-                    
                     System.out.println("[~]" + MeAgent.getLocalName() + " : " + msg.getSender().getLocalName() + "  sais he has such a product with price " + product.price + "  and will end in " + MeAgent.calculateRemaindTime(product.timeEnd) + "  seconds");
                     
                     //update product list
@@ -59,7 +54,7 @@ public class BuyerTick extends TickerBehaviour {
                             //if I am the last one who bid do not bid again
                             if (MeAgent.getLocalName().equals(product.buyerBid)) {
                                 
-                                System.out.println("[~]" + MeAgent.getLocalName() + " : sais: I am not biding again to " + msg.getSender().getLocalName() + " , I am the last one who did on this product ");									
+                                System.out.println("[~]" + MeAgent.getLocalName() + " : sais: I am not biding again to " + msg.getSender().getLocalName() + " , I am the last one who did on this product ");                                    
                                 // updates the requests list for this seller
                                 SellerRequest sr = new SellerRequest();
                                 sr.lastRequest = new Date();
@@ -165,7 +160,7 @@ public class BuyerTick extends TickerBehaviour {
                                 * product_id;bid_money(step);curr_nrBids;
                                 */
                                 ans.setContent(product.id  + " ;" + product.bidStep  + " ;" + product.nrBids);
-                                MeAgent.send(ans);	
+                                MeAgent.send(ans);    
                             }
 
                         } else {
@@ -174,7 +169,7 @@ public class BuyerTick extends TickerBehaviour {
                             
                             int idx = MeAgent.getProductIndex(product.id,product.seller);
                             MeAgent.myProducts.remove(idx);
-                            System.out.println("[~]" + MeAgent.getLocalName() + " : " + " is removing from my list product " + product.id + "  ; his budget:" + MeAgent.budget + "  but product price is: " + product.price);	
+                            System.out.println("[~]" + MeAgent.getLocalName() + " : " + " is removing from my list product " + product.id + "  ; his budget:" + MeAgent.budget + "  but product price is: " + product.price);    
                         }
                     } else {
                         //add for the first  time product to my list
@@ -182,7 +177,7 @@ public class BuyerTick extends TickerBehaviour {
                     }
                 }
             } else if (msg.getPerformative() == ACLMessage.CONFIRM) {
-                System.out.println("[~]" + MeAgent.getLocalName()  + " : " + " content=" + msg.getContent()  + "  I won the product from seller " + msg.getSender().getLocalName());	
+                System.out.println("[~]" + MeAgent.getLocalName()  + " : " + " content=" + msg.getContent()  + "  I won the product from seller " + msg.getSender().getLocalName());    
                 this.stop();
             }
         }
@@ -212,7 +207,7 @@ public class BuyerTick extends TickerBehaviour {
                             msgToSeller.addReceiver(list[i]);
                         }
                     }
-
+                    
                     //update last request to current date time;
                     SellerRequest sellerRequest = new SellerRequest();
                     sellerRequest.lastRequest = new Date();
